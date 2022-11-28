@@ -42,9 +42,11 @@ class Generator {
     const repoList = await wrapLoading(getRepoList, 'waiting fetch template');
     if (!repoList) return;
 
+    // 筛选
+    const needs = repoList.filter(item => item.id === 567242931)
+
     // 过滤我们需要的模板名称
-    console.log(JSON.stringify(repoList))
-    const repos = repoList.map(item => item.name);
+    const repos = needs.map(item => item.name);
 
     // 2）用户选择自己新下载的模板名称
     const { repo } = await inquirer.prompt({
