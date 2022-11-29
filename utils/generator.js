@@ -1,28 +1,12 @@
 // 模板创建器
 
-
-const { getRepoList } = require('./github.js')
-const ora = require('ora')
-const inquirer = require('inquirer')
-
-// 添加加载动画
-async function wrapLoading(fn, message, ...args) {
-  // 使用 ora 初始化，传入提示信息 message
-  const spinner = ora(message);
-  // 开始加载动画
-  spinner.start();
-
-  try {
-    // 执行传入方法 fn
-    const result = await fn(...args);
-    // 状态为修改为成功
-    spinner.succeed();
-    return result; 
-  } catch (error) {
-    // 状态为修改为失败
-    spinner.fail('Request failed, refetch ...')
-  } 
-}
+const path = require('path');
+const { getRepoList } = require('./github.js');
+const inquirer = require('inquirer');
+const config = require('../config.js');
+const util = require('util');
+const downloadGitRepo = require('download-git-repo');
+const wrapLoading = require('./loading.js');
 
 class Generator {
   constructor (name, targetDir){
@@ -30,6 +14,8 @@ class Generator {
     this.name = name;
     // 创建位置
     this.targetDir = targetDir;
+    // 下载
+    this.downloadGitRepo = util.promisify(downloadGitRepo);
   }
 
   // 获取用户选择的模板
@@ -43,7 +29,7 @@ class Generator {
     if (!repoList) return;
 
     // 筛选
-    const needs = repoList.filter(item => item.id === 567242931)
+    const needs = repoList.filter(item => config.support.includes(item.id))
 
     // 过滤我们需要的模板名称
     const repos = needs.map(item => item.name);
@@ -60,6 +46,21 @@ class Generator {
     return repo;
   }
 
+  // 下载逻辑
+
+  async download(repo){
+
+    // 1）拼接下载地址
+    const requestUrl = `undercurre/${repo}`;
+
+    // 2）调用下载方法
+    await wrapLoading(
+      this.downloadGitRepo, // 远程下载方法
+      'waiting download template', // 加载提示信息
+      requestUrl, // 参数1: 下载地址
+      path.resolve(process.cwd(), this.targetDir)) // 参数2: 创建位置
+  }
+
   // 核心创建逻辑
   // 1）获取模板名称
   // 2）获取 tag 名称
@@ -67,9 +68,13 @@ class Generator {
   async create(){
 
     // 1）获取模板名称
-    const repo = await this.getRepo()
+    const repo = await this.getRepo();
     
-    console.log('您选择了，repo=' + repo)
+    console.log('you chose，repo=' + repo);
+
+    // 2）下载模板
+
+    await this.download(repo);
   }
 }
 
