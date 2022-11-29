@@ -2,13 +2,23 @@
   "name": "ponda",
   "version": "1.0.0",
   "description": "",
-  "main": "cli.js",
-  "bin": "cli.js",
+  "main": "index.js",
+  "bin": {
+    "pd": "./bin/cli.js"
+  },
   "type": "commonjs",
+  "files": [
+    "lib",
+    "bin",
+    "utils"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "pd",
+    "脚手架"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {

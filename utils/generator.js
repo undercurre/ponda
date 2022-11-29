@@ -3,7 +3,7 @@
 const path = require('path');
 const { getRepoList } = require('./github.js');
 const inquirer = require('inquirer');
-const config = require('../config.js');
+const config = require('../bin/config.js');
 const util = require('util');
 const downloadGitRepo = require('download-git-repo');
 const wrapLoading = require('./loading.js');
