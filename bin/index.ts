@@ -7,7 +7,7 @@ import pkg from "./../package.json";
 import checkDir from "./utils/checkDir";
 import inquirer from "inquirer";
 import path from "path";
-import { exec } from "child_process";
+import { exec, execSync } from "child_process";
 import template from "./config/template";
 import fs from "fs";
 const program = new Command();
@@ -47,14 +47,15 @@ program
   .action(async (projectName, cmd) => {
     await checkDir(path.join(process.cwd(), projectName), projectName); // 检测创建项目文件夹是否存在
     inquirer.prompt(template.promptTypeList).then((result) => {
-      const { url, gitName, val } = result.type;
+      const { url, gitName, branch, val } = result.type;
       console.log("您选择的模版类型信息如下：" + val);
       console.log("项目初始化拷贝获取中...");
       if (!url) {
         console.log(chalk.red(`${val} 该类型暂不支持...`));
         process.exit(1);
       }
-      exec("git clone " + url, function (error, stdout, stderr) {
+      console.log(`git clone -b ${branch} ${url}`);
+      exec(`git clone -b ${branch} ${url}`, function (error, stdout, stderr) {
         if (error !== null) {
           console.log(chalk.red(`clone fail,${error}`));
           return;
@@ -66,6 +67,16 @@ program
               chalk.red(`The ${projectName} project template already exist`)
             );
           } else {
+            try {
+              // 进入当前项目文件夹，并在其中执行后续命令
+              execSync(
+                `cd ${projectName} && git remote rm origin && git branch -m master`,
+                { stdio: "inherit" }
+              );
+              console.log("Optimization successful.");
+            } catch (error) {
+              console.error("An error occurred:", error);
+            }
             console.log(
               chalk.green(
                 `The ${projectName} project template successfully create(项目模版创建成功)`

@@ -6,19 +6,30 @@ export default {
       name: "type",
       choices: [
         {
-          name: "mobile",
+          name: "Vue3-H5",
           value: {
-            url: "",
-            gitName: "vue-web-template",
-            val: "移动端模版",
+            url: "https://github.com/undercurre/PolyWeb.git",
+            gitName: "PolyWeb",
+            branch: "main",
+            val: "H5模板",
           },
         },
         {
-          name: "pc",
+          name: "Vue3-PC",
           value: {
-            url: "https://github.com/littleTreeme/vue-web-template.git",
-            gitName: "vue-web-template",
-            val: "PC端模版",
+            url: "https://github.com/undercurre/PolyWeb.git",
+            gitName: "PolyWeb",
+            branch: "electron",
+            val: "桌面应用模板",
+          },
+        },
+        {
+          name: "Vue3-Hybrid",
+          value: {
+            url: "https://github.com/undercurre/PolyWeb.git",
+            gitName: "PolyWeb",
+            branch: "uni(app/mini)",
+            val: "混合H5/APP/PC桌面应用/小程序开发模板",
           },
         },
       ],
